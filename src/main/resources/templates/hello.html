@@ -1,0 +1,45 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<body>
+<form action="/user/login" method="post">
+    <label>이름: </label>
+    <input id="userid" type="text"><br>
+    <label>비밀번호: </label>
+    <input id="password" type="password"><br>
+    <input type="button" id="submit" value="submit">
+
+</form>
+
+
+
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script th:inline="javascript">
+    $(document).ready(function (){
+       $('#submit').click(function () {
+           let sendData = {
+               userid: $("#userid").val(),
+               password: $("#password").val()
+           };
+
+           alert(sendData.username);
+           $.ajax({
+               type: 'post',
+               url: "/user/join",
+               headers : {
+                   "Content-Type" : "application/json"
+               },
+               data: JSON.parse(sendData)
+           })
+       });
+    });
+
+</script>
+
+</body>
+</html>

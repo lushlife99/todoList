@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <title>TodoListApp-Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .inline-flex{
+            display: inline-flex;
+            height: 1300px;
+            width: 1100px;
+        }
+         .centered {
+             display: table;
+             margin-left: auto;
+             margin-right: auto;
+             margin-top: auto;
+             margin-bottom: 5px;
+         }
+        .absolute {
+            /* 부모 요소인 parent를 기준으로 위치가 결정된다. */
+            position: absolute;
+        }
+        .relative {
+            position: relative;
+        }
+        .aa {
+            border-style: none;
+            background-color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="w3-bar w3-theme w3-xlarge">
+    <input type="text" class="w3-bar-item orgTitle"  style="background-color:transparent;"  th:name="${org.id}" th:value="${org.name}"></input>
+    <div class ="w3-right">
+        <input type="button" class="w3-button w3-round-xxlarge w3-black" value="Log out">
+        <input type="button" class="w3-button w3-round-xxlarge w3-black" value="Sign up">
+    </div>
+</div>
+
+<div class="w3-bar w3-theme">
+    <div class="w3-dropdown-hover">
+        <button class="w3-button w3-text-white" style="background-color: #009688;">OrgList🔽</button>
+        <div class="w3-dropdown-content w3-bar-block w3-card-4">
+            <span th:each="connection : ${user.orgList}">
+                      <a th:href="@{|/Org/${connection.org.id}|}" class="w3-bar-item w3-button" th:text="${connection.org.name}"></a>
+            </span>
+        </div>
+    </div>
+    <a href="javascript:void(0)" class="w3-bar-item w3-button w3-hover">Friends</a>
+    <a href="javascript:void(0)" class="w3-bar-item w3-button w3-hover">Invite</a>
+    <a href="javascript:void(0)" class="w3-bar-item w3-button w3-hover">Edit</a>
+</div>
+
+
+<div class="inline-flex" style="width: 290px">
+
+            <span th:each ="board : ${org.board}">
+                    <div class="w3-container w3-black w3-col s12 w3-row s3 w3-border" style="width: 290px">
+                        <div class="relative w3-margin w3-display-middle">
+
+                        </div>
+                    <div class="w3-card w3-blue w3-round-xxlarge">
+                         <p th:text="${board.title}"></p>
+                    </div>
+                <span th:each="purpose : ${board.purpose}">
+                   <div class="w3-card w3-round-xxlarge w3-blue relative" style="width:250px">
+                        <button class="w3-button w3-circle w3-black w3-display-topright absolute w3-padding-small" th:name="${purpose.id}" onclick="deletePurpose(this.name)">X</button>
+                    <div class="w3-container w3-center w3-margin">
+                        <form th:id="${purpose.id}" th:name="${purpose.id}" th:method="put">
+                            <p>
+                            <input type="text" class="w3-input aa title"  th:name="title" th:value="${purpose.title}"></input>
+                            </p>
+                            <p>
+                            <input type="text" class="w3-input aa context"  th:name="context" th:value="${purpose.context}"></input>
+                            </p>
+                        </form>
+                    </div>
+                   </div>
+                </span>
+                  <button th:id="${board.id}" class="w3-item w3-button w3-circle w3-blue centered" onclick="addPurpose(this.id);">+</button>
+                        <button class="w3-button w3-circle w3-blue centered" th:name="${board.id}" onclick="deleteBoard(this.name)">X</button>
+                    </div>
+            </span>
+    <div class="w3-container w3-black w3-col s2 w3-row s3 w3-border" style="width: 290px; height: 98.28px;">
+        <button class="w3-button w3-circle w3-blue relative " th:name="${org.id}" style="height: 60px; width: 60px; margin-top: 15px; text-align: center;" onclick="addBoard(this.name)">+</button>
+
+    </div>
+
+
+
+
+</div>
+
+</div>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+
+    function deleteBoard(boardId) {
+        let url = this.url;
+        $.ajax({
+            type : 'delete',
+            url: ("/board/"+boardId),
+            success : function (Id) {
+                location.href="/Org/"+Id
+            }
+        })
+    }
+
+    function addBoard(orgId) {
+        $.ajax({
+            type : 'post',
+            url: ("/board/"+orgId),
+            success : function (Id){
+                location.href="/Org/"+Id
+            }
+        })
+    }
+
+    function addPurpose(boardId){
+        $.ajax({
+            type: 'post',
+            url: encodeURI("/purpose"),
+            headers:{
+                "Content-Type" : "application/json"
+            },
+            data: JSON.stringify(boardId),
+            success : function (Id){
+            location.href="/Org/"+Id
+        }
+    })
+    }
+
+    function deletePurpose(purposeId) {
+        $.ajax({
+            type: 'delete',
+            url: encodeURI("/purpose/"+purposeId),
+            success : function (id){
+                location.href="/Org/"+id
+            }
+        })
+    }
+
+
+    function enterKeyPressed(event) {
+        let key = event.key || event.keyCode;
+        if ((key === 'Enter' && !event.shiftKey) || (key === 13 && key !== 16)) {
+            event.preventDefault();
+            if(event.target.className.includes('orgTitle')){
+
+            }
+            else {
+                var parentFormTag = event.target;
+                for(; parentFormTag.nodeName !='FORM'; parentFormTag=parentFormTag.parentElement);
+                let title = parentFormTag.querySelector('.title').valueOf().value;
+                let context = parentFormTag.querySelector('.context').valueOf().value;
+                let sendData = {
+                    id: parentFormTag.id,
+                    title: title,
+                    context: context
+                }
+                console.log(sendData);
+                $.ajax({
+                    type: 'put',
+                    url: encodeURI("/purpose"),
+                    headers: {
+                        "content-Type": "application/json"
+                    },
+                    data: JSON.stringify(sendData),
+                    success: function (id) {
+                        location.href = "/Org/" + id
+                    }
+                })
+            }
+            return false;
+        }
+    }
+    const title = document.querySelectorAll(".title");
+    const context = document.querySelectorAll(".context");
+    let orgTitle = document.querySelector(".orgTitle");
+
+    orgTitle.addEventListener('keydown', event => enterKeyPressed(event));
+
+    title.forEach((element) => {
+        element.addEventListener('keydown', event => enterKeyPressed(event));
+    })
+    context.forEach((element) => {
+        element.addEventListener('keydown', event => enterKeyPressed(event));
+    })
+
+</script>
+</html>
+
