@@ -4,6 +4,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import springboot.todoapp.model.Org;
 import springboot.todoapp.model.Purpose;
 import springboot.todoapp.model.User;
 import springboot.todoapp.service.PurposeService;
@@ -17,18 +18,18 @@ public class PurposeController {
 
     private final SessionManager sessionManager;
     @PostMapping("/purpose")
-    public Long addPurpose(@RequestBody Integer boardId, HttpServletRequest request){
-        return purposeService.addPurpose(boardId).getId();
+    public Org addPurpose(@RequestBody Integer boardId, HttpServletRequest request){
+        return purposeService.addPurpose(boardId);
 
     }
 
     @DeleteMapping("/purpose/{purposeId}")
-    public Long deletePurpose(@PathVariable Integer purposeId, HttpServletRequest request){
+    public Org deletePurpose(@PathVariable Integer purposeId, HttpServletRequest request){
         return purposeService.deletePurpose(purposeId);
     }
 
     @PutMapping("/purpose")
-    public Long updatePurpose(@RequestBody Purpose purpose, HttpServletRequest request){
+    public Org updatePurpose(@RequestBody Purpose purpose, HttpServletRequest request){
         return purposeService.updatePurpose(purpose);
     }
 }

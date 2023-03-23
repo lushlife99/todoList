@@ -25,6 +25,7 @@ public class BoardService {
     private final OrgRepository orgRepository;
 
 
+
     public Org addBoard(Integer OrgId){
         Org org = orgRepository.findById(OrgId).get();
         Board board = new Board();
@@ -36,12 +37,12 @@ public class BoardService {
         return orgRepository.save(org);
     }
 
-
-    public Long deleteBoard(Integer boardId){
-        Long id = boardRepository.findById(boardId).get().getOrg().getId();
-        boardRepository.deleteById(boardId);
-        return id;
-
+    @Transactional
+    public Org deleteBoard(Long boardId){
+        Org org = boardRepository.findById(boardId.intValue()).get().getOrg();
+        org.getBoard().removeIf(board -> board.getId().equals(boardId));
+        boardRepository.deleteById(boardId.intValue());
+        return org;
     }
 
 

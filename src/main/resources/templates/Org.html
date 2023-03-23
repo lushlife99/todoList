@@ -36,7 +36,7 @@
 
 
 <div class="w3-bar w3-theme w3-xlarge">
-    <input type="text" class="w3-bar-item orgTitle"  style="background-color:transparent;"  th:name="${org.id}" th:value="${org.name}"></input>
+    <input type="text" class="w3-bar-item orgName"  style="background-color:transparent;"  th:name="${org.id}" th:value="${org.name}"></input>
     <div class ="w3-right">
         <input type="button" class="w3-button w3-round-xxlarge w3-black" value="Log out">
         <input type="button" class="w3-button w3-round-xxlarge w3-black" value="Sign up">
@@ -66,30 +66,29 @@
 
                         </div>
                     <div class="w3-card w3-blue w3-round-xxlarge">
-                         <p th:text="${board.title}"></p>
+                         <p class="boardTitle"  th:name="${boardStat.index}" th:text="${board.title}"></p>
                     </div>
                 <span th:each="purpose : ${board.purpose}">
                    <div class="w3-card w3-round-xxlarge w3-blue relative" style="width:250px">
                         <button class="w3-button w3-circle w3-black w3-display-topright absolute w3-padding-small" th:name="${purpose.id}" onclick="deletePurpose(this.name)">X</button>
                     <div class="w3-container w3-center w3-margin">
-                        <form th:id="${purpose.id}" th:name="${purpose.id}" th:method="put">
+                        <form th:id="${purpose.id}" th:name="${boardStat.index}" th:method="put">
                             <p>
-                            <input type="text" class="w3-input aa title"  th:name="title" th:value="${purpose.title}"></input>
+                            <input type="text" class="w3-input aa purposeTitle"  th:name="${purposeStat.index}" th:value="${purpose.title}"></input>
                             </p>
                             <p>
-                            <input type="text" class="w3-input aa context"  th:name="context" th:value="${purpose.context}"></input>
+                            <input type="text" class="w3-input aa purposeContext"  th:name="${purposeStat.index}" th:value="${purpose.context}"></input>
                             </p>
                         </form>
                     </div>
                    </div>
                 </span>
-                  <button th:id="${board.id}" class="w3-item w3-button w3-circle w3-blue centered" onclick="addPurpose(this.id);">+</button>
+                  <button class="w3-item w3-button w3-circle w3-blue centered" th:name="${board.id}" onclick="addPurpose(this.name);">+</button>
                         <button class="w3-button w3-circle w3-blue centered" th:name="${board.id}" onclick="deleteBoard(this.name)">X</button>
                     </div>
             </span>
     <div class="w3-container w3-black w3-col s2 w3-row s3 w3-border" style="width: 290px; height: 98.28px;">
         <button class="w3-button w3-circle w3-blue relative " th:name="${org.id}" style="height: 60px; width: 60px; margin-top: 15px; text-align: center;" onclick="addBoard(this.name)">+</button>
-
     </div>
 
 
@@ -100,31 +99,48 @@
 </div>
 </body>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+
 <script th:inline="javascript">
     /*<![CDATA[*/
-    /*]]>*/
 
+    /*]]>*/
+    function updateOrg(){
+        let data = JSON.parse(localStorage.getItem("org"));
+        console.log(data);
+        $.ajax({
+            type : 'put',
+            url:("/org"),
+            headers:{
+                "Content-Type" : "application/json"
+            },
+            data: localStorage.getItem("org"),
+            success : function () {
+                location.href="/Org/"+[[${org.id}]];
+            }
+           })
+
+    }
+    function addBoard(orgId) {
+        $.ajax({
+            type : 'post',
+            url: ("/board/"+orgId),
+            success : function (data){
+                localStorage.setItem("org", JSON.stringify(data));
+                location.href="/Org/"+[[${org.id}]];
+            }
+        })
+    }
     function deleteBoard(boardId) {
         let url = this.url;
         $.ajax({
             type : 'delete',
             url: ("/board/"+boardId),
-            success : function (Id) {
-                location.href="/Org/"+Id
+            success : function (data) {
+                localStorage.setItem("org", JSON.stringify(data));
+                location.href="/Org/"+[[${org.id}]];
             }
         })
     }
-
-    function addBoard(orgId) {
-        $.ajax({
-            type : 'post',
-            url: ("/board/"+orgId),
-            success : function (Id){
-                location.href="/Org/"+Id
-            }
-        })
-    }
-
     function addPurpose(boardId){
         $.ajax({
             type: 'post',
@@ -133,60 +149,49 @@
                 "Content-Type" : "application/json"
             },
             data: JSON.stringify(boardId),
-            success : function (Id){
-            location.href="/Org/"+Id
+            success : function (data){
+                localStorage.setItem("org", JSON.stringify(data));
+                location.href="/Org/"+[[${org.id}]];
         }
     })
     }
-
     function deletePurpose(purposeId) {
         $.ajax({
             type: 'delete',
             url: encodeURI("/purpose/"+purposeId),
-            success : function (id){
-                location.href="/Org/"+id
+            success : function (data){
+                localStorage.setItem("org", JSON.stringify(data));
+                location.href="/Org/"+[[${org.id}]];
             }
         })
     }
-
-
     function enterKeyPressed(event) {
         let key = event.key || event.keyCode;
         if ((key === 'Enter' && !event.shiftKey) || (key === 13 && key !== 16)) {
             event.preventDefault();
-            if(event.target.className.includes('orgTitle')){
+            let data = JSON.parse(localStorage.getItem("org"));
+            var parentFormTag = event.target;
 
+            if (event.target.className.includes("orgName")) {
+                data.name = event.target.valueOf().value;
+            } else if (event.target.className.includes("boardTitle")) {
+                data.board[event.target.name].title = event.target.valueOf().value;
+            } else if (event.target.className.includes("purposeTitle") || event.target.className.includes("purposeContext")) {
+                for (; parentFormTag.nodeName != 'FORM'; parentFormTag = parentFormTag.parentElement) ;
+                let boardIdx = parentFormTag.name;
+                console.log(parentFormTag.querySelector('.purposeTitle'));
+                data.board[boardIdx].purpose[event.target.name].title = parentFormTag.querySelector('.purposeTitle').valueOf().value;
+                data.board[boardIdx].purpose[event.target.name].context = parentFormTag.querySelector('.purposeContext').valueOf().value;
             }
-            else {
-                var parentFormTag = event.target;
-                for(; parentFormTag.nodeName !='FORM'; parentFormTag=parentFormTag.parentElement);
-                let title = parentFormTag.querySelector('.title').valueOf().value;
-                let context = parentFormTag.querySelector('.context').valueOf().value;
-                let sendData = {
-                    id: parentFormTag.id,
-                    title: title,
-                    context: context
-                }
-                console.log(sendData);
-                $.ajax({
-                    type: 'put',
-                    url: encodeURI("/purpose"),
-                    headers: {
-                        "content-Type": "application/json"
-                    },
-                    data: JSON.stringify(sendData),
-                    success: function (id) {
-                        location.href = "/Org/" + id
-                    }
-                })
-            }
-            return false;
+            localStorage.setItem("org", JSON.stringify(data));
+            updateOrg();
         }
+        return false;
     }
-    const title = document.querySelectorAll(".title");
-    const context = document.querySelectorAll(".context");
-    let orgTitle = document.querySelector(".orgTitle");
-
+    const title = document.querySelectorAll(".purposeTitle");
+    const context = document.querySelectorAll(".purposeContext");
+    const boardTitle = document.querySelectorAll(".boardTitle");
+    let orgTitle = document.querySelector(".orgName");
     orgTitle.addEventListener('keydown', event => enterKeyPressed(event));
 
     title.forEach((element) => {
@@ -195,7 +200,9 @@
     context.forEach((element) => {
         element.addEventListener('keydown', event => enterKeyPressed(event));
     })
-
+    boardTitle.forEach((element) => {
+        element.addEventListener('keydown', event => enterKeyPressed(event));
+    })
 </script>
 </html>
 

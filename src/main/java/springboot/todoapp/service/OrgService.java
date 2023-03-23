@@ -11,6 +11,7 @@ import springboot.todoapp.repository.UserOrgConnectionRepository;
 import springboot.todoapp.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,11 @@ public class OrgService {
     public Org addOrg(User user){
         Org org = user.addOrg();
         return orgRepository.save(org);
+    }
+
+    public void updateOrg(Org org){
+        Org findOrg = orgRepository.findById(org.getId().intValue()).get();
+        orgRepository.save(findOrg.setOrg(org));
     }
 
 

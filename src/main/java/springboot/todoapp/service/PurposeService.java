@@ -1,6 +1,7 @@
 package springboot.todoapp.service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import springboot.todoapp.model.Board;
@@ -29,18 +30,18 @@ public class PurposeService {
         return purposeRepository.save(purpose).getBoard().getOrg();
     }
 
-    public Long updatePurpose(Purpose purpose){
+    public Org updatePurpose(Purpose purpose){
         Purpose purpose1 = purposeRepository.findById(purpose.getId().intValue()).get();
         purpose1.setTitle(purpose.getTitle());
         purpose1.setContext(purpose.getContext());
-        return purposeRepository.save(purpose1).getBoard().getOrg().getId();
+        return purposeRepository.save(purpose1).getBoard().getOrg();
     }
 
-    public Long deletePurpose(Integer purposeId){
+    public Org deletePurpose(Integer purposeId){
         System.out.println("PurposeService.deletePurpose");
         Purpose purpose = purposeRepository.findById(purposeId).get();
-        Long id = purpose.getBoard().getOrg().getId();
+        Org org  = purpose.getBoard().getOrg();
         purposeRepository.deleteById(purposeId);
-        return id;
+        return org;
     }
 }

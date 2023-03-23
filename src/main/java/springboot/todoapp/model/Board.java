@@ -19,12 +19,12 @@ public class Board {
     @Column(length = 100)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org")
     @JsonIgnore
     private Org org;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Purpose> purpose = new ArrayList<>();
 
 

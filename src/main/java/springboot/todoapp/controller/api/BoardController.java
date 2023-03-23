@@ -16,14 +16,14 @@ public class BoardController {
     BoardService boardService;
 
     @PostMapping("/board/{orgId}")
-    public Long addBoard(@PathVariable Integer orgId, HttpServletRequest request){
+    public Org addBoard(@PathVariable Integer orgId, HttpServletRequest request){
         System.out.println("orgId = " + orgId);
-        return boardService.addBoard(orgId).getId();
+        return boardService.addBoard(orgId);
 
     }
 
     @DeleteMapping("/board/{boardId}")
-    public Long deleteBoard(@PathVariable Integer boardId, HttpServletRequest request){
+    public Org deleteBoard(@PathVariable Long boardId, HttpServletRequest request){
         System.out.println("boardId = " + boardId);
         return boardService.deleteBoard(boardId);
 
