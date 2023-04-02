@@ -26,7 +26,6 @@ public class BoardController {
     public Org deleteBoard(@PathVariable Long boardId, HttpServletRequest request){
         System.out.println("boardId = " + boardId);
         return boardService.deleteBoard(boardId);
-
     }
 
 }

@@ -3,6 +3,7 @@ package springboot.todoapp.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import springboot.todoapp.model.Org;
 import springboot.todoapp.model.User;
 import springboot.todoapp.model.UserOrgConnection;
@@ -28,7 +29,13 @@ public class OrgService {
     }
 
     public Org addOrg(User user){
-        Org org = user.addOrg();
+        User findUser = userRepository.findByUserId(user.getUserId()).get();
+        Org org = findUser.addOrg();
+        UserOrgConnection userOrgConnection = new UserOrgConnection();
+        userOrgConnection.setOrg(org);
+        userOrgConnection.setUser(findUser);
+        userOrgConnectionRepository.save(userOrgConnection);
+        userRepository.save(findUser);
         return orgRepository.save(org);
     }
 

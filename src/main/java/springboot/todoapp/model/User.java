@@ -15,13 +15,14 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    String userId;
+    private String userId;
 
-    String username;
+    private String username;
 
-    String password;
+    private String password;
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
