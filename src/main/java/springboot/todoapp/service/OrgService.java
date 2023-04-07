@@ -24,7 +24,7 @@ public class OrgService {
     private final UserOrgConnectionRepository userOrgConnectionRepository;
 
 
-    public Org getOrg(Integer orgId){
+    public Org getOrg(Long orgId){
         return orgRepository.findById(orgId).get();
     }
 
@@ -40,7 +40,7 @@ public class OrgService {
     }
 
     public void updateOrg(Org org){
-        Org findOrg = orgRepository.findById(org.getId().intValue()).get();
+        Org findOrg = orgRepository.findById(org.getId()).get();
         orgRepository.save(findOrg.setOrg(org));
     }
 

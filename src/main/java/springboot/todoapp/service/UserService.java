@@ -34,7 +34,7 @@ public class UserService {
 
     private final BoardService boardService;
 
-    public User getUser(Integer id){
+    public User getUser(Long id){
         return userRepository.findById(id).get();
     }
 
@@ -60,7 +60,7 @@ public class UserService {
         else{
             Org org = user.addOrg();
             orgRepository.save(org);
-            org = boardService.addBoard(org.getId().intValue());
+            org = boardService.addBoard(org.getId());
             UserOrgConnection connection = new UserOrgConnection();
             connection.setUser(user);
             connection.setOrg(org);

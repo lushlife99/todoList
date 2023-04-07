@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User test(@PathVariable Integer id){
+    public User test(@PathVariable Long id){
         System.out.println("UserController.test");
         return userService.getUser(id);
     }

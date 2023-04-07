@@ -16,7 +16,7 @@ public class BoardController {
     BoardService boardService;
 
     @PostMapping("/board/{orgId}")
-    public Org addBoard(@PathVariable Integer orgId, HttpServletRequest request){
+    public Org addBoard(@PathVariable Long orgId, HttpServletRequest request){
         System.out.println("orgId = " + orgId);
         return boardService.addBoard(orgId);
 

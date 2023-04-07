@@ -34,7 +34,7 @@ public class Controller {
     public String JoinPage(){return "JoinForm";}
 
     @RequestMapping("/Org/{id}")
-    public String HomePage(@PathVariable Integer id, Model model, HttpServletRequest request){
+    public String HomePage(@PathVariable Long id, Model model, HttpServletRequest request){
         User user = userService.certificationCheck(request);
         if(user == null){
             return "LoginForm";
@@ -42,7 +42,7 @@ public class Controller {
 
         model.addAttribute("org", orgService.getOrg(id));
         model.addAttribute("connection", user.getOrgList());
-        User findUser = user = userRepository.findById(user.getId().intValue()).get();
+        User findUser = user = userRepository.findById(user.getId()).get();
         model.addAttribute("user", findUser);
         System.out.println("user.getOrgList().size() = " + findUser.getOrgList().size());
         return "Org";

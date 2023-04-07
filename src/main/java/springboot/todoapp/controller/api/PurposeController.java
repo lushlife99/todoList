@@ -18,13 +18,13 @@ public class PurposeController {
 
     private final SessionManager sessionManager;
     @PostMapping("/purpose")
-    public Org addPurpose(@RequestBody Integer boardId, HttpServletRequest request){
+    public Org addPurpose(@RequestBody Long boardId, HttpServletRequest request){
         return purposeService.addPurpose(boardId);
 
     }
 
     @DeleteMapping("/purpose/{purposeId}")
-    public Org deletePurpose(@PathVariable Integer purposeId, HttpServletRequest request){
+    public Org deletePurpose(@PathVariable Long purposeId, HttpServletRequest request){
         return purposeService.deletePurpose(purposeId);
     }
 

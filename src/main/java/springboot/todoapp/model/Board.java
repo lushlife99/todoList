@@ -29,10 +29,3 @@ public class Board {
 
 
 }
-
-/*
-    유저와 단체는 many to many.
-    단체와 보드는 one to many
-    단체에는 역할이 있음.
-    보드와 목적은 one to many
- */

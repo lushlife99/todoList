@@ -23,6 +23,12 @@ public class User {
 
     private String password;
 
+    @OneToMany
+    private List<User> friendList;
+
+    @OneToMany
+    private List<Invite> inviteList;
+
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
